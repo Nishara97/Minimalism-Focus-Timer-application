@@ -16,10 +16,26 @@ import {
   Coffee,
   BrainCircuit,
   VolumeX,
-  Volume2
+  Volume2,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export default function App() {
+  // --- Theme State ---
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('focus-theme') as 'light' | 'dark') || 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('focus-theme', theme);
+  }, [theme]);
+
+  const isDark = theme === 'dark';
+
   // --- 1. Configuration & Initial States ---
   const [config, setConfig] = useState<TimerConfig>({
     workDuration: 25,
@@ -214,54 +230,103 @@ export default function App() {
     WORK: {
       accent: 'stroke-[#E11D48] text-[#E11D48]',
       progress: 'stroke-[#E11D48]',
-      badge: 'bg-rose-50 text-rose-700 border-rose-100',
+      badge: isDark
+        ? 'bg-[#E11D48]/25 text-rose-200 border-[#E11D48]/40'
+        : 'bg-rose-50 text-rose-700 border-rose-100',
     },
     SHORT_BREAK: {
-      accent: 'stroke-emerald-600 text-emerald-600',
-      progress: 'stroke-emerald-600',
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+      accent: isDark ? 'stroke-emerald-400 text-emerald-400' : 'stroke-emerald-600 text-emerald-600',
+      progress: isDark ? 'stroke-emerald-400' : 'stroke-emerald-600',
+      badge: isDark
+        ? 'bg-emerald-500/25 text-emerald-200 border-emerald-500/40'
+        : 'bg-emerald-50 text-emerald-700 border-emerald-100',
     },
     LONG_BREAK: {
-      accent: 'stroke-sky-600 text-sky-600',
-      progress: 'stroke-sky-600',
-      badge: 'bg-sky-50 text-sky-700 border-sky-100',
+      accent: isDark ? 'stroke-sky-400 text-sky-400' : 'stroke-sky-600 text-sky-600',
+      progress: isDark ? 'stroke-sky-400' : 'stroke-sky-600',
+      badge: isDark
+        ? 'bg-sky-500/25 text-sky-200 border-sky-500/40'
+        : 'bg-sky-50 text-sky-700 border-sky-100',
     }
   };
 
   const activeColor = colors[mode];
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-[#1C1917] p-4 md:p-8 font-sans flex flex-col justify-between transition-colors duration-1000 relative overflow-hidden">
+    <div className={`min-h-screen transition-colors duration-1000 p-4 md:p-8 font-sans flex flex-col justify-between relative overflow-hidden ${
+      isDark ? 'bg-[#0A1128] text-[#F1F5F9]' : 'bg-[#FAFAF9] text-[#1C1917]'
+    }`}>
       
       {/* Background Graphic Decor (Minimalist) */}
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#FCE7F3] rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#E0F2FE] rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
+      <div className={`absolute -bottom-24 -left-24 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none transition-all duration-1000 ${
+        isDark ? 'bg-[#1E3A8A] opacity-35' : 'bg-[#FCE7F3] opacity-20'
+      }`}></div>
+      <div className={`absolute -top-24 -right-24 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none transition-all duration-1000 ${
+        isDark ? 'bg-[#0EA5E9] opacity-30' : 'bg-[#E0F2FE] opacity-20'
+      }`}></div>
 
       {/* Top Header Row */}
-      <header className="max-w-6xl mx-auto w-full flex justify-between items-center py-4 px-2 relative z-10 border-b border-[#E7E5E4]/50">
+      <header className={`max-w-6xl mx-auto w-full flex justify-between items-center py-4 px-2 relative z-10 border-b transition-colors duration-1000 ${
+        isDark ? 'border-[#1E294B]' : 'border-[#E7E5E4]/50'
+      }`}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[#E11D48] rounded-full flex items-center justify-center shadow-sm">
             <span className="text-white text-xs font-bold font-mono">F</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#1C1917] tracking-tight font-display">FocusFlow</h1>
-            <span className="text-[9px] text-[#78716C] uppercase tracking-widest font-mono">Pomodoro Sandbox</span>
+            <h1 className={`text-lg font-bold tracking-tight font-display transition-colors duration-1000 ${
+              isDark ? 'text-white' : 'text-[#1C1917]'
+            }`}>FocusFlow</h1>
+            <span className={`text-[9px] uppercase tracking-widest font-mono transition-colors duration-1000 ${
+              isDark ? 'text-[#94A3B8]' : 'text-[#78716C]'
+            }`}>Pomodoro Sandbox</span>
           </div>
         </div>
 
         {/* Navigation tabs - Decorative Clean Minimalism navigation links */}
-        <div className="hidden md:flex gap-6 text-sm font-medium text-[#78716C]">
-          <span className="border-b-2 border-[#E11D48] text-[#1C1917] pb-1 cursor-default">Timer</span>
-          <span className="hover:text-[#1C1917] cursor-pointer pb-1 transition-colors">Analytics</span>
-          <span className="hover:text-[#1C1917] cursor-pointer pb-1 transition-colors">Settings</span>
+        <div className={`hidden md:flex gap-6 text-sm font-medium transition-colors duration-1000 ${
+          isDark ? 'text-[#94A3B8]' : 'text-[#78716C]'
+        }`}>
+          <span className={`border-b-2 pb-1 cursor-default transition-colors duration-1000 ${
+            isDark ? 'border-[#E11D48] text-white' : 'border-[#E11D48] text-[#1C1917]'
+          }`}>Timer</span>
+          <span className={`pb-1 transition-colors duration-1000 cursor-pointer ${
+            isDark ? 'hover:text-white' : 'hover:text-[#1C1917]'
+          }`}>Analytics</span>
+          <span className={`pb-1 transition-colors duration-1000 cursor-pointer ${
+            isDark ? 'hover:text-white' : 'hover:text-[#1C1917]'
+          }`}>Settings</span>
         </div>
 
-        {/* Dynamic Streak Indicator */}
-        <div className="flex items-center gap-1.5 bg-white shadow-sm border border-[#E7E5E4] px-3 py-1.5 rounded-xl">
-          <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-          <span className="text-xs font-bold text-[#1C1917] font-mono">
-            {history.filter((s) => s.mode === 'WORK').length} Streak
-          </span>
+        {/* Right Header Side: Theme Switcher & Streak Counter */}
+        <div className="flex items-center gap-2.5">
+          {/* Theme Toggle Button */}
+          <button
+            id="theme-toggle-btn"
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            className={`p-2 rounded-xl border transition-all duration-300 cursor-pointer flex items-center justify-center ${
+              isDark
+                ? 'bg-[#131C35] border-[#1E294B] text-yellow-400 hover:bg-[#1E294B] hover:scale-105 active:scale-95'
+                : 'bg-white border-[#E7E5E4] text-[#44403C] hover:bg-[#F5F5F4] hover:scale-105 active:scale-95'
+            }`}
+            title={isDark ? "Switch to Light Mode" : "Switch to Deep Sea Dark Mode"}
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          {/* Dynamic Streak Indicator */}
+          <div className={`flex items-center gap-1.5 shadow-sm px-3 py-1.5 rounded-xl border transition-all duration-1000 ${
+            isDark
+              ? 'bg-[#131C35] border-[#1E294B]'
+              : 'bg-white border-[#E7E5E4]'
+          }`}>
+            <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+            <span className={`text-xs font-bold font-mono transition-colors duration-1000 ${
+              isDark ? 'text-white' : 'text-[#1C1917]'
+            }`}>
+              {history.filter((s) => s.mode === 'WORK').length} Streak
+            </span>
+          </div>
         </div>
       </header>
 
@@ -272,10 +337,14 @@ export default function App() {
         <div className="lg:col-span-7 flex flex-col gap-6 w-full">
           
           {/* Main Focus Control Container */}
-          <div className="bg-white border border-[#E7E5E4] rounded-3xl p-8 flex flex-col items-center relative overflow-hidden shadow-sm">
+          <div className={`rounded-3xl p-8 flex flex-col items-center relative overflow-hidden shadow-sm transition-all duration-1000 ${
+            isDark ? 'bg-[#111A36] border border-[#1E294B]' : 'bg-white border border-[#E7E5E4]'
+          }`}>
             
             {/* Sub-Header Mode Selectors */}
-            <div className="flex gap-1 p-1 bg-[#F5F5F4] rounded-2xl mb-8 border border-[#E7E5E4] w-full max-w-sm">
+            <div className={`flex gap-1 p-1 rounded-2xl mb-8 w-full max-w-sm transition-all duration-1000 ${
+              isDark ? 'bg-[#1E294B] border border-[#24335C]' : 'bg-[#F5F5F4] border border-[#E7E5E4]'
+            }`}>
               {(['WORK', 'SHORT_BREAK', 'LONG_BREAK'] as TimerMode[]).map((tabMode) => (
                 <button
                   id={`mode-tab-${tabMode}`}
@@ -284,8 +353,12 @@ export default function App() {
                   onClick={() => selectModeManually(tabMode)}
                   className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                     mode === tabMode
-                      ? 'bg-white text-[#1C1917] shadow-sm'
-                      : 'text-[#78716C] hover:text-[#1C1917]'
+                      ? isDark
+                        ? 'bg-[#111A36] text-white shadow-sm'
+                        : 'bg-white text-[#1C1917] shadow-sm'
+                      : isDark
+                        ? 'text-[#94A3B8] hover:text-white'
+                        : 'text-[#78716C] hover:text-[#1C1917]'
                   }`}
                 >
                   {tabMode === 'WORK' ? 'Focus' : tabMode === 'SHORT_BREAK' ? 'Short Break' : 'Long Break'}
@@ -303,7 +376,9 @@ export default function App() {
                   cx="150"
                   cy="150"
                   r={radius}
-                  className="stroke-[#F5F5F4] fill-none"
+                  className={`fill-none transition-colors duration-1000 ${
+                    isDark ? 'stroke-[#1E294B]' : 'stroke-[#F5F5F4]'
+                  }`}
                   strokeWidth="4"
                 />
                 {/* Active Progress Overlay */}
@@ -327,13 +402,17 @@ export default function App() {
                 </span>
 
                 {/* Massive Timer Clock */}
-                <span className="text-6xl font-extrabold text-[#1C1917] tracking-tight font-mono leading-none py-1 tabular-nums">
+                <span className={`text-6xl font-extrabold tracking-tight font-mono leading-none py-1 tabular-nums transition-colors duration-1000 ${
+                  isDark ? 'text-white' : 'text-[#1C1917]'
+                }`}>
                   {formatTime(secondsLeft)}
                 </span>
 
                 {/* Current Target indicator inside loop */}
                 <div className="max-w-[180px] mt-1 text-center">
-                  <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wide block line-clamp-1">
+                  <span className={`text-[11px] font-bold uppercase tracking-wide block line-clamp-1 transition-colors duration-1000 ${
+                    isDark ? 'text-[#94A3B8]' : 'text-[#78716C]'
+                  }`}>
                     {mode === 'WORK' ? `${currentTask}` : 'Relax & Recharge'}
                   </span>
                 </div>
@@ -341,7 +420,9 @@ export default function App() {
             </div>
 
             {/* Mode Tag Label */}
-            <div className="mt-4 text-[10px] uppercase tracking-[0.4em] font-bold text-[#78716C]">
+            <div className={`mt-4 text-[10px] uppercase tracking-[0.4em] font-bold transition-colors duration-1000 ${
+              isDark ? 'text-[#94A3B8]' : 'text-[#78716C]'
+            }`}>
               {mode === 'WORK' ? 'Focus Phase' : mode === 'SHORT_BREAK' ? 'Short Break' : 'Long Break'}
             </div>
 
@@ -352,7 +433,11 @@ export default function App() {
                 id="reset-timer-btn"
                 type="button"
                 onClick={handleReset}
-                className="w-16 h-16 rounded-full border border-[#D6D3D1] flex items-center justify-center hover:bg-[#F5F5F4] text-[#44403C] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                  isDark
+                    ? 'border border-[#24335C] bg-[#131C35] hover:bg-[#1E294B] text-[#94A3B8] hover:text-white'
+                    : 'border border-[#D6D3D1] hover:bg-[#F5F5F4] text-[#44403C]'
+                }`}
                 title="Reset Timer"
               >
                 <RotateCcw className="w-5 h-5" />
@@ -363,7 +448,11 @@ export default function App() {
                 id="toggle-timer-btn"
                 type="button"
                 onClick={togglePlay}
-                className="w-24 h-24 rounded-full bg-[#1C1917] text-white flex items-center justify-center shadow-md hover:bg-[#44403C] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className={`w-24 h-24 rounded-full flex items-center justify-center shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                  isDark
+                    ? 'bg-[#F1F5F9] text-[#0A1128] hover:bg-white hover:shadow-[#F1F5F9]/10'
+                    : 'bg-[#1C1917] text-white hover:bg-[#44403C]'
+                }`}
                 title={isRunning ? 'Pause' : 'Start'}
               >
                 {isRunning ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current translate-x-0.5" />}
@@ -374,7 +463,11 @@ export default function App() {
                 id="skip-timer-btn"
                 type="button"
                 onClick={handleSkip}
-                className="w-16 h-16 rounded-full border border-[#D6D3D1] flex items-center justify-center hover:bg-[#F5F5F4] text-[#44403C] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                  isDark
+                    ? 'border border-[#24335C] bg-[#131C35] hover:bg-[#1E294B] text-[#94A3B8] hover:text-white'
+                    : 'border border-[#D6D3D1] hover:bg-[#F5F5F4] text-[#44403C]'
+                }`}
                 title="Skip Interval"
               >
                 <SkipForward className="w-5 h-5" />
@@ -383,7 +476,7 @@ export default function App() {
           </div>
 
           {/* Current focus target tracker widget */}
-          <FocusTask currentTask={currentTask} setCurrentTask={setCurrentTask} />
+          <FocusTask currentTask={currentTask} setCurrentTask={setCurrentTask} isDark={isDark} />
         </div>
 
         {/* RIGHT COLUMN: CUSTOMIZATION & CONFIGURATIONS (Spans 5 of 12 columns) */}
@@ -393,6 +486,7 @@ export default function App() {
             config={config}
             onUpdateConfig={setConfig}
             disabled={isRunning}
+            isDark={isDark}
           />
 
           {/* Sound, Test tones and Volume Control Settings Panel */}
@@ -401,18 +495,22 @@ export default function App() {
             setAlarmSound={setAlarmSound}
             volume={volume}
             setVolume={setVolume}
+            isDark={isDark}
           />
 
           {/* Session logs log history */}
           <SessionHistory
             history={history}
             onClearHistory={handleClearHistory}
+            isDark={isDark}
           />
         </div>
       </main>
 
       {/* Modern Compact Footer */}
-      <footer className="max-w-6xl mx-auto w-full text-center py-6 text-[10px] text-[#78716C] font-mono border-t border-[#E7E5E4]/50 mt-6 flex flex-col md:flex-row justify-between items-center gap-2 px-2 relative z-10">
+      <footer className={`max-w-6xl mx-auto w-full text-center py-6 text-[10px] font-mono border-t mt-6 flex flex-col md:flex-row justify-between items-center gap-2 px-2 relative z-10 transition-colors duration-1000 ${
+        isDark ? 'border-[#1E294B] text-[#94A3B8]' : 'border-[#E7E5E4]/50 text-[#78716C]'
+      }`}>
         <span>© 2026 FocusFlow. Clean Minimalist Pomodoro Workspace.</span>
         <div className="flex gap-4">
           <span>Local Storage Persistence</span>
