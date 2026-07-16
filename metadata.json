@@ -1,0 +1,6 @@
+{
+  "name": "Pomodoro Focus Timer",
+  "description": "A clean, modern, and customizable Pomodoro-style focus timer with configurable work and break intervals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
